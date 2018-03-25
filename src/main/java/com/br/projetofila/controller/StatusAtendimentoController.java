@@ -2,21 +2,32 @@ package com.br.projetofila.controller;
 
 import com.br.projetofila.bean.StatusAtendimento;
 import com.br.projetofila.repository.StatusAtendimentoRepository;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping(value="status_atendimento")
+@RequestMapping(value = "status_atendimento")
 public class StatusAtendimentoController {
-    
+
     @Autowired
     private StatusAtendimentoRepository statusAtendimentoRepository;
-     
-     @GetMapping(value="/all")
-     public @ResponseBody Iterable<StatusAtendimento> getAllTipoFuncionarios(){
-         return statusAtendimentoRepository.findAll();
-     }
+
+    @GetMapping(value = "/all")
+    public @ResponseBody
+    Iterable<StatusAtendimento> getAllStatusAtendimento() {
+        return statusAtendimentoRepository.findAll();
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/{idStatusAtendimento}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody
+    Optional<StatusAtendimento> getStatusAtendimento(@PathVariable("idStatusAtendimento") Integer idStatusAtendimetno) {
+        return statusAtendimentoRepository.findById(idStatusAtendimetno);
+    }
 }
