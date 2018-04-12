@@ -8,24 +8,30 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
-@RequestMapping(value = "/funcionario")
+@RestController
 public class FuncionarioController {
 
     @Autowired
     private FuncionarioRepository funcionarioRepository;
 
-    @GetMapping(value = "/all")
+    @RequestMapping("/funcionario")
     public @ResponseBody
     Iterable<Funcionario> getFuncionarios() {
         return funcionarioRepository.findAll();
     }
+    
+    @RequestMapping(method =RequestMethod.POST, value="/funcionario")
+    public void addAssunto(@RequestBody Funcionario funcionario){
+        funcionarioRepository.save(funcionario);
+    }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/{idFuncionario}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.GET, value = "/funcionario/{idFuncionario}", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
     Optional<Funcionario> getFuncionario(@PathVariable("idFuncionario") Integer idFuncionario) {
         return funcionarioRepository.findById(idFuncionario);

@@ -19,7 +19,8 @@ import javax.persistence.TemporalType;
 public class Token implements Serializable {
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE)
+        @Column(name="ID")
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	
 	@ManyToOne

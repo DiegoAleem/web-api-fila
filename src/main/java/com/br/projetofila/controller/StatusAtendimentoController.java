@@ -11,21 +11,21 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
-@RequestMapping(value = "status_atendimento")
+@RestController
 public class StatusAtendimentoController {
 
     @Autowired
     private StatusAtendimentoRepository statusAtendimentoRepository;
 
-    @GetMapping(value = "/all")
+    @RequestMapping("/statusAtendimento")
     public @ResponseBody
     Iterable<StatusAtendimento> getAllStatusAtendimento() {
         return statusAtendimentoRepository.findAll();
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/{idStatusAtendimento}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.GET, value = "/statusAtendimento/{idStatusAtendimento}", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
     Optional<StatusAtendimento> getStatusAtendimento(@PathVariable("idStatusAtendimento") Integer idStatusAtendimetno) {
         return statusAtendimentoRepository.findById(idStatusAtendimetno);

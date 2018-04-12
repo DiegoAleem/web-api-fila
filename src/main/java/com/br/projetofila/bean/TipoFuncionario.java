@@ -14,7 +14,8 @@ import javax.persistence.Table;
 public class TipoFuncionario implements Serializable{
     
     @Id
-    @GeneratedValue(strategy=GenerationType.SEQUENCE)
+    @Column(name="ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     
     @Column(name="CARGO")

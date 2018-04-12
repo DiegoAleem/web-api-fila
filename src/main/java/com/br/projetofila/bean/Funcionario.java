@@ -15,7 +15,8 @@ import javax.persistence.Table;
 public class Funcionario implements Serializable {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name="ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
      
     @Column(name="NOME")

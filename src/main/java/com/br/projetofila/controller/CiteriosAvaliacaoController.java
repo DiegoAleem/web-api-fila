@@ -11,21 +11,21 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
-@RequestMapping(value = "/criterios_avaliacao")
+@RestController
 public class CiteriosAvaliacaoController {
 
     @Autowired
     private CriteriosAvaliacaoRepository criteriosAvaliacaoRepository;
 
-    @GetMapping(value = "/all")
+    @RequestMapping("/criteriosAvaliacao")
     public @ResponseBody
     Iterable<CriteriosAvaliacao> getAllCriteriosAvaliaco() {
         return criteriosAvaliacaoRepository.findAll();
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/{idCA}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(method = RequestMethod.GET, value = "/criteriosAvaliacao/{idCA}", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
     Optional<CriteriosAvaliacao> getAssunto(@PathVariable("idCA") Integer idCA) {
         return criteriosAvaliacaoRepository.findById(idCA);

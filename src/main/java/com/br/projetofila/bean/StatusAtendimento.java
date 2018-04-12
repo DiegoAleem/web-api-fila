@@ -12,8 +12,9 @@ import javax.persistence.Table;
 @Table(name="STATUS_ATENDIMENTO")
 public class StatusAtendimento implements Serializable {
     
-    @Id
-    @GeneratedValue(strategy=GenerationType.SEQUENCE)
+   @Id
+    @Column(name="ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     
     @Column(name="DESCRICAO")

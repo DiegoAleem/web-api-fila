@@ -1,5 +1,6 @@
 package com.br.projetofila.controller;
 
+import com.br.projetofila.bean.TipoToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,23 +13,41 @@ import java.util.Optional;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
-@RequestMapping(value = "/token")
+@RestController
 public class TokenController {
 
     @Autowired
     private TokenRepository tokenRepository;
 
-    @GetMapping(value = "/all")
+    @RequestMapping("/token")
     public @ResponseBody
     Iterable<Token> getAllTokens() {
         return tokenRepository.findAll();
     }
-
-    @RequestMapping(method = RequestMethod.GET, value = "/{idToken}", produces = MediaType.APPLICATION_JSON_VALUE)
+    
+    @RequestMapping(method=RequestMethod.GET, value = "/token/normal/qtdPessoas", produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
-    Optional<Token> getToken(@PathVariable("idToken") Integer idToken) {
+    Integer getQtdTokenNormais(){
+        return tokenRepository.qtdTokenNormaisFila();
+    }
+    
+    @RequestMapping(method=RequestMethod.GET, value = "/token/preferencial/qtdPessoas", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody
+    Integer getQtdTokenPreferencial(){
+        return tokenRepository.qtdTokenPreferencialFila();
+    }
+    
+    @RequestMapping(method=RequestMethod.GET, value = "/token/preferencial/mediaTempo", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody
+    Float getMediaTempoTokenPreferencial(){
+        return tokenRepository.mediaChamadaPreferencialFila();
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/token/{idToken}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody
+    Optional<Token> getTokenById(@PathVariable("idToken") Integer idToken) {
         return tokenRepository.findById(idToken);
     }
 }
