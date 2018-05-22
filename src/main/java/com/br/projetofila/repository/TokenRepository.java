@@ -47,4 +47,11 @@ public interface TokenRepository extends CrudRepository<Token, Integer>{
             + " FROM Atendimento a inner join a.token t WHERE t.tipoToken = 1")
     public ArrayList<Date> dataAtendimentoNormalFila();
     
+    @Query("SELECT tk"
+            + " FROM Token tk WHERE tk.id = ?1 AND tk.tipoToken = 1")
+    public Token achaPosicaoFilaNormal(int id);
+    
+    @Query("SELECT tk"
+            + " FROM Token tk WHERE tk.id = ?1 AND tk.tipoToken = 2")
+    public Token achaPosicaoFilaPreferencial(int id);
 }
