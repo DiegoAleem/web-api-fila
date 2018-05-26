@@ -2,6 +2,8 @@ package com.br.projetofila.repository;
 
 import org.springframework.data.repository.CrudRepository;
 import com.br.projetofila.bean.Token;
+import com.br.projetofila.vo.SituacaoFilasVO;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -10,7 +12,16 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TokenRepository extends CrudRepository<Token, Integer>{
-     
+	
+	@Query(value = "SELECT ROUND(AVG(MINUTE(TIMEDIFF(a.data_inicio, t.data_retirada)))) " + 
+			"FROM atendimento a " + 
+			"JOIN token t " + 
+			"ON a.token_id = t.id " + 
+			"WHERE MINUTE(TIMEDIFF(CURRENT_TIMESTAMP(),a.data_inicio)) < 60 " + 
+			"AND   DATE(a.data_inicio) = CURRENT_DATE() " + 
+			"AND t.tipo_token_id = ?1", nativeQuery = true)
+	public int mediaTempo(String tipoToken);
+	
     @Query("SELECT count(t) FROM Token t WHERE t.tipoToken = 1")
     public Integer qtdTokenNormaisFila();
     
