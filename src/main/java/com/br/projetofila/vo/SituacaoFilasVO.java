@@ -1,38 +1,48 @@
 package com.br.projetofila.vo;
 
 public class SituacaoFilasVO {
-	private int tempoEsperaPreferencial;
-	private int qtdPessoasPreferencial;
+	private Integer tempoEsperaPreferencial;
+	private Integer qtdPessoasPreferencial;
 	
-	private int tempoEsperaNormal;
-	private int qtdPessoasNormal;
+	private Integer tempoEsperaNormal;
+	private Integer qtdPessoasNormal;
 	
 	
 	
 	public SituacaoFilasVO() {	}
 	
-	public int getTempoEsperaPreferencial() {
+	public SituacaoFilasVO(Integer tempoEsperaPreferencial, Integer qtdPessoasPreferencial, Integer tempoEsperaNormal,
+			Integer qtdPessoasNormal) {
+		super();
+		this.tempoEsperaPreferencial = tempoEsperaPreferencial;
+		this.qtdPessoasPreferencial = qtdPessoasPreferencial;
+		this.tempoEsperaNormal = tempoEsperaNormal;
+		this.qtdPessoasNormal = qtdPessoasNormal;
+	}
+
+
+	public Integer getTempoEsperaPreferencial() {
 		return tempoEsperaPreferencial;
 	}
-	public void setTempoEsperaPreferencial(int tempoEsperaPreferencial) {
+	public void setTempoEsperaPreferencial(Integer tempoEsperaPreferencial) {
 		this.tempoEsperaPreferencial = tempoEsperaPreferencial;
 	}
-	public int getQtdPessoasPreferencial() {
+	public Integer getQtdPessoasPreferencial() {
 		return qtdPessoasPreferencial;
 	}
-	public void setQtdPessoasPreferencial(int qtdPessoasPreferencial) {
+	public void setQtdPessoasPreferencial(Integer qtdPessoasPreferencial) {
 		this.qtdPessoasPreferencial = qtdPessoasPreferencial;
 	}
-	public int getTempoEsperaNormal() {
+	public Integer getTempoEsperaNormal() {
 		return tempoEsperaNormal;
 	}
-	public void setTempoEsperaNormal(int tempoEsperaNormal) {
+	public void setTempoEsperaNormal(Integer tempoEsperaNormal) {
 		this.tempoEsperaNormal = tempoEsperaNormal;
 	}
-	public int getQtdPessoasNormal() {
+	public Integer getQtdPessoasNormal() {
 		return qtdPessoasNormal;
 	}
-	public void setQtdPessoasNormal(int qtdPessoasNormal) {
+	public void setQtdPessoasNormal(Integer qtdPessoasNormal) {
 		this.qtdPessoasNormal = qtdPessoasNormal;
 	}
 

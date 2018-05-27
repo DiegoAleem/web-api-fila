@@ -52,7 +52,7 @@
                 <dependency>
                         <groupId>joda-time</groupId>
                         <artifactId>joda-time</artifactId>
-                        <version>2.7</version>
+                        <version>2.7</version><!--$NO-MVN-MAN-VER$-->
                 </dependency>
 	</dependencies>
 
