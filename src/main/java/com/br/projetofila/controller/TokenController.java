@@ -16,11 +16,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.br.projetofila.bean.TipoToken;
 import com.br.projetofila.bean.Token;
+import com.br.projetofila.factory.TimeFactory;
 import com.br.projetofila.repository.TipoTokenRepository;
 import com.br.projetofila.repository.TokenRepository;
 import com.br.projetofila.vo.SituacaoFilasVO;
+import com.br.projetofila.vo.TokenVO;
 
 @RestController
 public class TokenController {
@@ -46,12 +49,14 @@ public class TokenController {
         return tokenRepository.findById(idToken);
     }
     
-    @RequestMapping(method =RequestMethod.POST, value="/token")
+    @RequestMapping(method = RequestMethod.POST, value="/token")
     public ResponseEntity<Token> addNovoToken(@RequestBody Token novoToken){
 // 		TODO
 //    	novoToken.setSenha(senha);
-//    	novoToken.setDataRetirada(dataRetirada);
-    	tokenRepository.save(novoToken);
+    	
+    	
+    	novoToken.setDataRetirada(TimeFactory.getCurrentTime());
+    	tokenRepository.save(novoToken); //Salva no banco
     	Token ultimoTokenInserido = getTokenById(novoToken.getId()).get(); 
     	senhasAtendimento.put(ultimoTokenInserido.getId(), ultimoTokenInserido);
         return new ResponseEntity<Token>(ultimoTokenInserido, HttpStatus.OK);
@@ -62,18 +67,18 @@ public class TokenController {
     	SituacaoFilasVO situacao = new SituacaoFilasVO(0,0,0,0);
     	
     	// NORMAL
-    	situacao.setTempoEsperaNormal(tokenRepository.mediaTempo("1"));
+    	situacao.setTempoEsperaNormal(tokenRepository.getMediaTempoEsperaByTipo("1"));
     	if (situacao.getTempoEsperaNormal() == null) {
 			situacao.setTempoEsperaNormal(0);
 		}
-    	situacao.setQtdPessoasNormal(0);
+    	situacao.setQtdPessoasNormal(tokenRepository.getQuantidadeTokensNormaisAguardando("1"));
     	
     	// PREFERENCIAL
-    	situacao.setTempoEsperaPreferencial(tokenRepository.mediaTempo("2"));
+    	situacao.setTempoEsperaPreferencial(tokenRepository.getMediaTempoEsperaByTipo("2"));
     	if (situacao.getTempoEsperaPreferencial() == null) {
 			situacao.setTempoEsperaPreferencial(0);
 		}
-    	situacao.setQtdPessoasPreferencial(0);
+    	situacao.setQtdPessoasPreferencial(tokenRepository.getQuantidadeTokensNormaisAguardando("2"));
     	
         return new ResponseEntity<SituacaoFilasVO>(situacao, HttpStatus.OK);
     }
@@ -115,20 +120,6 @@ public class TokenController {
         novo.setTipoToken(tk);
         novo.setSenha(Integer.toString(senha));
         return novo;
-    }
-    
-    @RequestMapping(method=RequestMethod.GET, value = "/token/normal/qtdPessoasFila", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody
-    Integer getQtdTokenNormais(){
-        return tokenRepository.qtdTokenNormaisFila() - tokenRepository.qtdPessoasNormaisAtendimento();
-    }
-    
-    @RequestMapping(method=RequestMethod.GET, value = "/token/preferencial/qtdPessoasFila", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody
-    Integer getQtdTokenPreferencial(){
-        return tokenRepository.qtdTokenPreferencialFila() - tokenRepository.qtdPessoasNPreferenciaisAtendimento();
-    }
-
-    
+    } 
     
 }

@@ -18,17 +18,20 @@ public interface TokenRepository extends CrudRepository<Token, Integer>{
 			"WHERE MINUTE(TIMEDIFF(CURRENT_TIMESTAMP(),a.data_inicio)) < 60 " + 
 			"AND   DATE(a.data_inicio) = CURRENT_DATE() " + 
 			"AND t.tipo_token_id = ?1", nativeQuery = true)
-	public Integer mediaTempo(String tipoToken);
+	public Integer getMediaTempoEsperaByTipo(String tipoToken);
 	
-    @Query("SELECT count(t) FROM Token t WHERE t.tipoToken = 1")
-    public Integer qtdTokenNormaisFila();
+	@Query(value = "SELECT COUNT(*)" + 
+			"FROM token t" + 
+			"LEFT JOIN atendimento a" + 
+			" ON t.id = a.token_id" + 
+			"WHERE a.id IS NULL" + 
+			"AND tipo_token_id = ?1", nativeQuery = true)
+    public Integer getQuantidadeTokensNormaisAguardando(String tipoToken);
     
     @Query("SELECT count(a)"
             + " FROM Atendimento a inner join a.token t WHERE t.tipoToken = 1")
     public Integer qtdPessoasNormaisAtendimento();
     
-    @Query("SELECT count(t) FROM Token t WHERE t.tipoToken = 2")
-    public Integer qtdTokenPreferencialFila();
 
     @Query("SELECT count(a)"
             + " FROM Atendimento a inner join a.token t WHERE t.tipoToken = 2")

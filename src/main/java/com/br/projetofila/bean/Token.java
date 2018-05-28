@@ -18,6 +18,11 @@ import javax.persistence.TemporalType;
 @Table(name="TOKEN")
 public class Token implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Id
         @Column(name="ID")
         @GeneratedValue(strategy = GenerationType.IDENTITY)
