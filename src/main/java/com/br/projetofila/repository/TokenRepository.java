@@ -20,11 +20,11 @@ public interface TokenRepository extends CrudRepository<Token, Integer>{
 			"AND t.tipo_token_id = ?1", nativeQuery = true)
 	public Integer getMediaTempoEsperaByTipo(String tipoToken);
 	
-	@Query(value = "SELECT COUNT(*)" + 
-			"FROM token t" + 
-			"LEFT JOIN atendimento a" + 
-			" ON t.id = a.token_id" + 
-			"WHERE a.id IS NULL" + 
+	@Query(value = "SELECT COUNT(*) " + 
+			"FROM token t " + 
+			"LEFT JOIN atendimento a " + 
+			"ON t.id = a.token_id " + 
+			"WHERE a.id IS NULL " + 
 			"AND tipo_token_id = ?1", nativeQuery = true)
     public Integer getQuantidadeTokensNormaisAguardando(String tipoToken);
     
