@@ -28,7 +28,7 @@ import com.br.projetofila.vo.TokenVO;
 @RestController
 public class TokenController {
 	
-	private HashMap<Integer, Token> senhasAtendimento = new HashMap<>();
+    private HashMap<Integer, Token> senhasAtendimento = new HashMap<>();
 	
     @Autowired
     private TokenRepository tokenRepository;
