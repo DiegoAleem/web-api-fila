@@ -19,11 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.br.projetofila.bean.TipoToken;
 import com.br.projetofila.bean.Token;
+import com.br.projetofila.factory.SenhaFactory;
 import com.br.projetofila.factory.TimeFactory;
 import com.br.projetofila.repository.TipoTokenRepository;
 import com.br.projetofila.repository.TokenRepository;
 import com.br.projetofila.vo.SituacaoFilasVO;
-import com.br.projetofila.vo.TokenVO;
 
 @RestController
 public class TokenController {
@@ -35,6 +35,8 @@ public class TokenController {
 
     @Autowired
     private TipoTokenRepository tipoTokenRepository;
+    
+    private SenhaFactory senhaFactory;
     
     
     @RequestMapping("/token")
@@ -51,10 +53,12 @@ public class TokenController {
     
     @RequestMapping(method = RequestMethod.POST, value="/token")
     public ResponseEntity<Token> addNovoToken(@RequestBody Token novoToken){
-// 		TODO
-//    	novoToken.setSenha(senha);
-    	
-    	
+//    	if (novoToken.getTipoToken().getId() == 1) {
+//    		novoToken.setSenha(senhaFactory.getProximaSenhaNormal());
+//    	}else {
+//    		novoToken.setSenha(senhaFactory.getProximaSenhaPreferencial());
+//    	}
+    	novoToken.setSenha("0");
     	novoToken.setDataRetirada(TimeFactory.getCurrentTime());
     	tokenRepository.save(novoToken); //Salva no banco
     	Token ultimoTokenInserido = getTokenById(novoToken.getId()).get(); 
@@ -101,9 +105,8 @@ public class TokenController {
     Token getNovoTokenNormal(){
         Token novo = getNovo();
         ArrayList<Token> token = tokenRepository.getTokensNormal();
-        int senha = Integer.parseInt(token.get(token.size()-1).getSenha())+1;        
+        int senha = Integer.parseInt(token.get(token.size()-1).getSenha())+1;  
         TipoToken tk = tipoTokenRepository.getTipoTokenNormal();
-              
         novo.setTipoToken(tk);
         novo.setSenha(Integer.toString(senha));
         return novo;
