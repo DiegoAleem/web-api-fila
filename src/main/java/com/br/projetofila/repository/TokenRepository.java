@@ -26,9 +26,18 @@ public interface TokenRepository extends CrudRepository<Token, Integer>{
 			"ON t.id = a.token_id " + 
 			"WHERE a.id IS NULL " + 
 			"AND tipo_token_id = ?1", nativeQuery = true)
-    public Integer getQuantidadeTokensNormaisAguardando(String tipoToken);
+    public Integer getQuantidadeTokensAguardando(String tipoToken);
+    
+        @Query(value = "SELECT t " + 
+			"FROM token t " + 
+			"LEFT JOIN atendimento a " + 
+			"ON t.id = a.token_id " + 
+			"WHERE a.id IS NULL " +  
+			"AND  DATE(t.data_retirada) = CURRENT_DATE()" +
+			"AND t.tipo_token_id = ?1", nativeQuery = true)
+    public ArrayList<Token> getTokensAguardando(String tipoToken);    
 	
-	@Query(value = "SELECT MAX(senha) " + 
+        @Query(value = "SELECT MAX(senha) " + 
 			"FROM token " + 
 			"WHERE tipo_token_id = ?1 " + 
 			"AND DATE(data_retirada) = DATE(NOW())", nativeQuery = true)
@@ -37,8 +46,7 @@ public interface TokenRepository extends CrudRepository<Token, Integer>{
     @Query("SELECT count(a)"
             + " FROM Atendimento a inner join a.token t WHERE t.tipoToken = 1")
     public Integer qtdPessoasNormaisAtendimento();
-    
-
+   
     @Query("SELECT count(a)"
             + " FROM Atendimento a inner join a.token t WHERE t.tipoToken = 2")
     public Integer qtdPessoasNPreferenciaisAtendimento();

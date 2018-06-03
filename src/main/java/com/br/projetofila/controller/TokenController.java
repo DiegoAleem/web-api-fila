@@ -24,11 +24,14 @@ import com.br.projetofila.factory.TimeFactory;
 import com.br.projetofila.repository.TipoTokenRepository;
 import com.br.projetofila.repository.TokenRepository;
 import com.br.projetofila.vo.SituacaoFilasVO;
+import com.br.projetofila.vo.StatusTokenVO;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 
 @RestController
 public class TokenController {
-	
-    private HashMap<Integer, Token> senhasAtendimento = new HashMap<>();
+    
+    private LinkedHashMap<Integer, Token> senhasAtendimento = new LinkedHashMap<>();
 	
     @Autowired
     private TokenRepository tokenRepository;
@@ -37,6 +40,7 @@ public class TokenController {
     private TipoTokenRepository tipoTokenRepository;
     
     private SenhaFactory senhaFactory;
+    
     
     
     @RequestMapping("/token")
@@ -53,17 +57,62 @@ public class TokenController {
     
     @RequestMapping(method = RequestMethod.POST, value="/token")
     public ResponseEntity<Token> addNovoToken(@RequestBody Token novoToken){
-//    	if (novoToken.getTipoToken().getId() == 1) {
-//    		novoToken.setSenha(senhaFactory.getProximaSenhaNormal());
-//    	}else {
-//    		novoToken.setSenha(senhaFactory.getProximaSenhaPreferencial());
-//    	}
-    	novoToken.setSenha("0");
+        String ultimaSenhaNormal = "";
+        String ultimaSenhaPreferencial = "";
+    	if (novoToken.getTipoToken().getId() == 1) {
+            ultimaSenhaNormal = tokenRepository.getUltimaSenhaByTipo("1");
+		if (ultimaSenhaNormal == null) {
+			novoToken.setSenha("1");
+		}else {
+			int senhaInt = Integer.parseInt(ultimaSenhaNormal);
+			novoToken.setSenha(Integer.toString(++senhaInt));
+		}
+    	}else {
+            int ultimaSenhaFormatada;
+            ultimaSenhaPreferencial = ultimaSenhaPreferencial = tokenRepository.getUltimaSenhaByTipo("2");
+            if(ultimaSenhaPreferencial == null){
+                novoToken.setSenha("P1");
+            }
+            else{
+                ultimaSenhaFormatada = Integer.parseInt(ultimaSenhaPreferencial.substring(ultimaSenhaPreferencial.indexOf("P")+1));
+                novoToken.setSenha("P"+Integer.toString(++ultimaSenhaFormatada));
+            }
+    	}
+    	//novoToken.setSenha("0");
     	novoToken.setDataRetirada(TimeFactory.getCurrentTime());
     	tokenRepository.save(novoToken); //Salva no banco
     	Token ultimoTokenInserido = getTokenById(novoToken.getId()).get(); 
     	senhasAtendimento.put(ultimoTokenInserido.getId(), ultimoTokenInserido);
         return new ResponseEntity<Token>(ultimoTokenInserido, HttpStatus.OK);
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/status/{senha}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public  ResponseEntity<StatusTokenVO> getFilaBySenha(@PathVariable("senha") String senha) {
+        StatusTokenVO status = new StatusTokenVO();
+        Collection<Token> tokens = senhasAtendimento.values();
+        int pos = 0;
+        int tempo = 0;
+        try{
+            if(senha.contains("P"))
+                tempo = tokenRepository.getMediaTempoEsperaByTipo("2");
+            else
+                tempo = tokenRepository.getMediaTempoEsperaByTipo("1");
+        }
+        catch(NullPointerException e){
+            System.out.println(e);
+        }
+        for(Token token: tokens){
+            pos++;
+            if(token.getSenha().equals(senha))
+                break;
+        }
+        status.setPosicaoFila(pos);
+        if(tempo > 0)
+            status.setTempoAtendimento(tempo * pos);
+        else 
+            status.setTempoAtendimento(0);
+        status.setStatus("NENHUM");
+        return new ResponseEntity<>(status, HttpStatus.OK);
     }
     
     @RequestMapping("/status")
@@ -75,14 +124,14 @@ public class TokenController {
     	if (situacao.getTempoEsperaNormal() == null) {
 			situacao.setTempoEsperaNormal(0);
 		}
-    	situacao.setQtdPessoasNormal(tokenRepository.getQuantidadeTokensNormaisAguardando("1"));
+    	situacao.setQtdPessoasNormal(tokenRepository.getQuantidadeTokensAguardando("1"));
     	
     	// PREFERENCIAL
     	situacao.setTempoEsperaPreferencial(tokenRepository.getMediaTempoEsperaByTipo("2"));
     	if (situacao.getTempoEsperaPreferencial() == null) {
 			situacao.setTempoEsperaPreferencial(0);
 		}
-    	situacao.setQtdPessoasPreferencial(tokenRepository.getQuantidadeTokensNormaisAguardando("2"));
+    	situacao.setQtdPessoasPreferencial(tokenRepository.getQuantidadeTokensAguardando("2"));
     	
         return new ResponseEntity<SituacaoFilasVO>(situacao, HttpStatus.OK);
     }
@@ -90,8 +139,6 @@ public class TokenController {
     
     public Token getNovo(){
         Token novo = new Token();
-        //ArrayList<Token> tks = (ArrayList<Token>) tokenRepository.findAll();
-        //novo.setId(tks.get(tks.size()-1).getId()+1);
         Calendar c = Calendar.getInstance();  
         c.add(Calendar.HOUR_OF_DAY, -3);
        
