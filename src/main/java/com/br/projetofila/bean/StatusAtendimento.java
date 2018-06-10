@@ -18,7 +18,7 @@ public class StatusAtendimento implements Serializable {
     private int id;
     
     @Column(name="DESCRICAO")
-    private String cargo;
+    private String descricao;
 
     public int getId() {
         return id;
@@ -28,12 +28,12 @@ public class StatusAtendimento implements Serializable {
         this.id = id;
     }
 
-    public String getCargo() {
-        return cargo;
+    public String getDescricao() {
+        return descricao;
     }
 
-    public void setCargo(String cargo) {
-        this.cargo = cargo;
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
     
     

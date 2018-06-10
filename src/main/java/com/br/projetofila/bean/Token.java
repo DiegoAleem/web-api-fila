@@ -43,6 +43,11 @@ public class Token implements Serializable {
 	@Column(name="DATA_RETIRADA")
 	private Date dataRetirada;
 
+        @ManyToOne
+        @JoinColumn(name="STATUS_ATENDIMENTO_ID")
+        private StatusAtendimento statusAtendimento;
+
+        
 	public int getId() {
 		return id;
 	}
@@ -81,8 +86,15 @@ public class Token implements Serializable {
 
 	public void setDataRetirada(Date dataRetirada) {
 		this.dataRetirada = dataRetirada;
-	}
+	}	
 	
-	
+        public StatusAtendimento getStatusAtendimento() {
+            return statusAtendimento;
+        }
+
+        public void setStatusAtendimento(StatusAtendimento statusAtendimento) {
+            this.statusAtendimento = statusAtendimento;
+        }
+
 	
 }

@@ -24,10 +24,6 @@ public class HistoricoAtendimento implements Serializable {
     @JoinColumn(name="ATENDIMENTO_ID")
     private Atendimento atendimento;
     
-    @ManyToOne
-    @JoinColumn(name="STATUS_ATENDIMENTO_ID")
-    private StatusAtendimento statusAtendimento;
-
     public int getId() {
         return id;
     }
@@ -43,14 +39,5 @@ public class HistoricoAtendimento implements Serializable {
     public void setAtendimento(Atendimento atendimento) {
         this.atendimento = atendimento;
     }
-
-    public StatusAtendimento getStatusAtendimento() {
-        return statusAtendimento;
-    }
-
-    public void setStatusAtendimento(StatusAtendimento statusAtendimento) {
-        this.statusAtendimento = statusAtendimento;
-    }
-    
     
 }
