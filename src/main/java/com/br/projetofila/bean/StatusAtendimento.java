@@ -12,13 +12,25 @@ import javax.persistence.Table;
 @Table(name="STATUS_ATENDIMENTO")
 public class StatusAtendimento implements Serializable {
     
-   @Id
+   /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	
+
+	public StatusAtendimento(int id, String descricao) {
+		this.id = id;
+		this.descricao = descricao;
+	}
+
+	@Id
     @Column(name="ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     
     @Column(name="DESCRICAO")
-    private String cargo;
+    private String descricao;
 
     public int getId() {
         return id;
@@ -29,11 +41,11 @@ public class StatusAtendimento implements Serializable {
     }
 
     public String getCargo() {
-        return cargo;
+        return descricao;
     }
 
-    public void setCargo(String cargo) {
-        this.cargo = cargo;
+    public void setCargo(String descricao) {
+        this.descricao = descricao;
     }
     
     
