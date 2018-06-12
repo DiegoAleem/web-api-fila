@@ -39,12 +39,12 @@ public class StatusAtendimento implements Serializable {
     public void setId(int id) {
         this.id = id;
     }
-
-    public String getCargo() {
+    
+    public String getDescricao() {
         return descricao;
     }
 
-    public void setCargo(String descricao) {
+    public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
     

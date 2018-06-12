@@ -16,26 +16,27 @@ public interface TokenRepository extends CrudRepository<Token, Integer>{
 			"JOIN token t " + 
 			"ON a.token_id = t.id " + 
 			"WHERE MINUTE(TIMEDIFF(CURRENT_TIMESTAMP(),a.data_inicio)) < 60 " + 
-			"AND   DATE(a.data_inicio) = CURRENT_DATE() " + 
-			"AND t.tipo_token_id = ?1", nativeQuery = true)
+			"AND  DATE(a.data_inicio) = CURRENT_DATE() " + 
+			"AND t.tipo_token_id = ?1 AND t.STATUS_ATENDIMENTO_ID < 3 ", nativeQuery = true)
 	public Integer getMediaTempoEsperaByTipo(String tipoToken);
 	
+        @Query(value = "SELECT * " + 
+			"FROM token " +  
+			"WHERE DATE(data_retirada) = CURRENT_DATE() " + 
+			"AND senha = ?1 ", nativeQuery = true)
+	public Token getTokenBySenhaDiaAtual(String senha);
+        
 	@Query(value = "SELECT COUNT(*) " + 
-			"FROM token t " + 
-			"LEFT JOIN atendimento a " + 
-			"ON t.id = a.token_id " + 
-			"WHERE a.id IS NULL " + 
-			"AND tipo_token_id = ?1", nativeQuery = true)
-    public Integer getQuantidadeTokensAguardando(String tipoToken);
+			"FROM token t WHERE"
+                    +   " DATE(t.data_retirada) = CURRENT_DATE()"
+                    +   " AND tipo_token_id = ?1 AND t.STATUS_ATENDIMENTO_ID < 3", nativeQuery = true)
+         public Integer getQuantidadeTokensAguardando(String tipoToken);
     
         @Query(value = "SELECT t " + 
-			"FROM token t " + 
-			"LEFT JOIN atendimento a " + 
-			"ON t.id = a.token_id " + 
-			"WHERE a.id IS NULL " +  
-			"AND  DATE(t.data_retirada) = CURRENT_DATE()" +
-			"AND t.tipo_token_id = ?1", nativeQuery = true)
-    public ArrayList<Token> getTokensAguardando(String tipoToken);    
+			"FROM token t " +  
+			"WHERE DATE(t.data_retirada) = CURRENT_DATE()" +
+			"AND t.tipo_token_id = ?1 AND t.STATUS_ATENDIMENTO_ID < 3", nativeQuery = true)
+        public ArrayList<Token> getTokensAguardando(String tipoToken);    
 	
         @Query(value = "SELECT MAX(senha) " + 
 			"FROM token " + 
@@ -44,11 +45,11 @@ public interface TokenRepository extends CrudRepository<Token, Integer>{
 	public String getUltimaSenhaByTipo(String tipoToken);
     
     @Query("SELECT count(a)"
-            + " FROM Atendimento a inner join a.token t WHERE t.tipoToken = 1")
+            + " FROM Atendimento a inner join a.token t WHERE t.tipoToken = 1 AND t.statusAtendimento < 3")
     public Integer qtdPessoasNormaisAtendimento();
    
     @Query("SELECT count(a)"
-            + " FROM Atendimento a inner join a.token t WHERE t.tipoToken = 2")
+            + " FROM Atendimento a inner join a.token t WHERE t.tipoToken = 2 AND t.statusAtendimento < 3")
     public Integer qtdPessoasNPreferenciaisAtendimento();
     
     @Query("SELECT t FROM Token t WHERE t.tipoToken = 2")

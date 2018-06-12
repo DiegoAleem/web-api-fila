@@ -47,7 +47,7 @@ public class Token implements Serializable {
 	@JoinColumn(name="STATUS_ATENDIMENTO_ID")     
     private StatusAtendimento statusAtendimento;
 
-
+        
 	public int getId() {
 		return id;
 	}
@@ -95,6 +95,5 @@ public class Token implements Serializable {
 	public void setStatusAtendimento(StatusAtendimento statusAtendimento) {
 		this.statusAtendimento = statusAtendimento;
 	}
-	
 	
 }

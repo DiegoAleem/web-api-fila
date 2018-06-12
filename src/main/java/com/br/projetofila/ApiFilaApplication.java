@@ -19,6 +19,7 @@ public class ApiFilaApplication extends SpringBootServletInitializer{
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
 		return builder.sources(ApiFilaApplication.class);
 	}
+<<<<<<< HEAD
 
 	@RequestMapping(value="/")
 	public String home() {
@@ -26,4 +27,13 @@ public class ApiFilaApplication extends SpringBootServletInitializer{
 	}
 
 
+=======
+	
+	@RequestMapping(value="/")
+	public String home() {
+		return "Olá, a parada ta funcionando";
+	}
+	
+	
+>>>>>>> 278e4399ed226438ebc668a4988169be1228450d
 }
