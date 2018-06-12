@@ -123,14 +123,15 @@ public class TokenController {
             status.setTempoAtendimento(tempo * pos);
         else 
             status.setTempoAtendimento(0);
+        
         if(tokenconfig.getStatusAtendimento().getId() < 3){
             if(status.getTempoAtendimento() <= 5)
                 status.setStatus(satAtendimentoRepository.getDescricaoById("2"));
             else
                 status.setStatus(satAtendimentoRepository.getDescricaoById("1"));
-        }
-        else
+        }else {
             status.setStatus(tokenconfig.getStatusAtendimento().getDescricao());
+        }
         return new ResponseEntity<>(status, HttpStatus.OK);
     }
     

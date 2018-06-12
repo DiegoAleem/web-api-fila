@@ -17,7 +17,9 @@ public class StatusAtendimento implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	public StatusAtendimento() {
 	
+	}
 
 	public StatusAtendimento(int id, String descricao) {
 		this.id = id;

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 public interface StatusAtendimentoRepository extends CrudRepository<StatusAtendimento, Integer>{
      
 	@Query(value = "SELECT descricao " + 
-			"FROM StatusAtendimento WHERE"
+			"FROM status_atendimento WHERE"
                     +   " id = ?1", nativeQuery = true)
          public String getDescricaoById(String id);
 }
