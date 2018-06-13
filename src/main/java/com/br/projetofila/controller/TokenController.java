@@ -22,14 +22,15 @@ import com.br.projetofila.repository.TokenRepository;
 import com.br.projetofila.vo.SituacaoFilasVO;
 import com.br.projetofila.vo.StatusTokenVO;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 
 @RestController
 public class TokenController {
     
-    private final LinkedHashMap<Integer, Token> senhasAtendimentoNormais = new LinkedHashMap<>();
+    private final LinkedHashMap<String, Token> senhasAtendimentoNormais = new LinkedHashMap<>();
        
-    private final LinkedHashMap<Integer, Token> senhasAtendimentoPreferenciais = new LinkedHashMap<>();
+    private final LinkedHashMap<String, Token> senhasAtendimentoPreferenciais = new LinkedHashMap<>();
     
     @Autowired
     private TokenRepository tokenRepository;
@@ -38,17 +39,16 @@ public class TokenController {
     private StatusAtendimentoRepository satAtendimentoRepository;
     
     
-    @RequestMapping("/token")
+    @RequestMapping("/token/normal")
     public @ResponseBody
-    Iterable<Token> getAllTokens() {
-        LinkedHashMap<Integer, Token> senhasAtendimento = new LinkedHashMap<>();
-        for(int i = 0; i <= senhasAtendimentoNormais.size();i++ )
-            senhasAtendimento.put(senhasAtendimentoNormais.get(i).getId(), senhasAtendimentoNormais.get(i));
-        
-        for(int i = 0; i <= senhasAtendimentoPreferenciais.size();i++ )
-            senhasAtendimento.put(senhasAtendimentoPreferenciais.get(i).getId(), senhasAtendimentoPreferenciais.get(i));
-        
-    return senhasAtendimento.values();
+    LinkedHashMap<String, Token> getAllTokensNormal() {
+        return senhasAtendimentoNormais;
+    }
+    
+    @RequestMapping("/token/preferencial")
+    public @ResponseBody
+    LinkedHashMap<String, Token> getAllTokensPrefenciais() {
+        return senhasAtendimentoPreferenciais;
     }
     
     @RequestMapping(method = RequestMethod.GET, value = "/token/{idToken}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -82,49 +82,59 @@ public class TokenController {
     	}
     	
     	novoToken.setDataRetirada(TimeFactory.getCurrentTime());
-    	// ESSA LINHA
     	novoToken.setStatusAtendimento(new StatusAtendimento(1, "AGUARDANDO"));
     	tokenRepository.save(novoToken); //Salva no banco
     	Token ultimoTokenInserido = getTokenById(novoToken.getId()).get();
-        if(novoToken.getTipoToken().getId() == 1)
-            senhasAtendimentoNormais.put(ultimoTokenInserido.getId(), ultimoTokenInserido);
-        else
-           senhasAtendimentoPreferenciais.put(ultimoTokenInserido.getId(), ultimoTokenInserido);
+    	
+        if(novoToken.getTipoToken().getId() == 1) {
+            senhasAtendimentoNormais.put(ultimoTokenInserido.getSenha(), ultimoTokenInserido);
+        }else {
+           senhasAtendimentoPreferenciais.put(ultimoTokenInserido.getSenha(), ultimoTokenInserido);
+        }
+        
         return new ResponseEntity<>(ultimoTokenInserido, HttpStatus.OK);
     }
     
     @RequestMapping(method = RequestMethod.GET, value = "/status/{senha}", produces = MediaType.APPLICATION_JSON_VALUE)
     public  ResponseEntity<StatusTokenVO> getFilaBySenha(@PathVariable("senha") String senha) {
         StatusTokenVO status = new StatusTokenVO();
-        ArrayList<Token> tokens = new ArrayList<>();
+        Collection<Token> tokens = new ArrayList<Token>();
         Token tokenconfig = tokenRepository.getTokenBySenhaDiaAtual(senha);
-        int pos = 0;
-        int tempo = 0;
-        try{
-            if(senha.contains("P")){
-                tempo = tokenRepository.getMediaTempoEsperaByTipo("2");
-                tokens = (ArrayList<Token>) senhasAtendimentoPreferenciais.values();
-            }
-            else{
-                tempo = tokenRepository.getMediaTempoEsperaByTipo("1");
-                tokens = (ArrayList<Token>) senhasAtendimentoNormais.values();
-            }
+        Integer pos = 0;
+        Integer tempo = 0;
+        
+        if(senha.contains("P")){
+            tempo = tokenRepository.getMediaTempoEsperaByTipo("2");
+            tokens = senhasAtendimentoPreferenciais.values();
+        } else {
+            tempo = tokenRepository.getMediaTempoEsperaByTipo("1");
+            tokens = senhasAtendimentoNormais.values();
         }
-        catch(NullPointerException e){
-            System.out.println(e);
+        
+        if (tempo == null) {
+        	tempo = 0;
         }
+        
         for(Token token: tokens){
             pos++;
             if(token.getSenha().equals(senha))
                 break;
         }
-        status.setPosicaoFila(pos);
-        if(tempo > 0)
+        
+        if (pos == 0) {
+        	status.setPosicaoFila(pos+1);
+        }else {
+        	status.setPosicaoFila(pos);
+        }
+ 
+        
+        System.out.println(tempo);
+        if(tempo.intValue() > 0)
             status.setTempoAtendimento(tempo * pos);
         else 
             status.setTempoAtendimento(0);
         
-        if(tokenconfig.getStatusAtendimento().getId() < 3){
+        if(pos < 3){
             if(status.getTempoAtendimento() <= 5)
                 status.setStatus(satAtendimentoRepository.getDescricaoById("2"));
             else

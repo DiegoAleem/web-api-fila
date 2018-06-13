@@ -11,8 +11,8 @@ package com.br.projetofila.vo;
  */
 public class StatusTokenVO {
     
-    int posicaoFila;
-    int tempoAtendimento;
+    Integer posicaoFila;
+    Integer tempoAtendimento;
     String status;
 
     public StatusTokenVO(int posicaoFila, int tempoAtendimento, String status) {
