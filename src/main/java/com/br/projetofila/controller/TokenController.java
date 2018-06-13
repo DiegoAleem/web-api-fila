@@ -59,25 +59,24 @@ public class TokenController {
     
     @RequestMapping(method = RequestMethod.POST, value="/token")
     public ResponseEntity<Token> addNovoToken(@RequestBody Token novoToken){
-        String ultimaSenhaNormal = "";
-        String ultimaSenhaPreferencial = "";
+        Integer ultimaSenhaNormal;
+        Integer ultimaSenhaPreferencial;
     	if (novoToken.getTipoToken().getId() == 1) {
             ultimaSenhaNormal = tokenRepository.getUltimaSenhaByTipo("1");
 			if (ultimaSenhaNormal == null) {
 				novoToken.setSenha("1");
 			}else {
-				int senhaInt = Integer.parseInt(ultimaSenhaNormal);
-				novoToken.setSenha(Integer.toString(++senhaInt));
+				int senhaInt = ultimaSenhaNormal + 1;
+				novoToken.setSenha(Integer.toString(senhaInt));
 			}
     	}else {
-            int ultimaSenhaFormatada;
             ultimaSenhaPreferencial = tokenRepository.getUltimaSenhaByTipo("2");
             if(ultimaSenhaPreferencial == null){
                 novoToken.setSenha("P1");
             }
             else{
-                ultimaSenhaFormatada = Integer.parseInt(ultimaSenhaPreferencial.substring(ultimaSenhaPreferencial.indexOf("P")+1));
-                novoToken.setSenha("P"+Integer.toString(++ultimaSenhaFormatada));
+                int ultimaSenhaFormatada = ultimaSenhaPreferencial + 1;
+                novoToken.setSenha("P"+Integer.toString(ultimaSenhaFormatada));
             }
     	}
     	

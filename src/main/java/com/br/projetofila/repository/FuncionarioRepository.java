@@ -16,4 +16,8 @@ public interface FuncionarioRepository extends CrudRepository<Funcionario, Integ
     @Query(value="SELECT new com.br.projetofila.vo.FuncionarioVO(f.nome, f.matricula, f.senha, f.tipoFuncionario.cargo) FROM Funcionario f WHERE f.matricula=?1")
     public FuncionarioVO findFuncionario(@RequestParam("matricula") String matricula);
     
+    @Query(value="SELECT * FROM funcionario f WHERE f.matricula = ?1", nativeQuery = true)
+    public Funcionario findFuncionarioByMatricula(@RequestParam("matricula") String matricula);
+    
+    
 }

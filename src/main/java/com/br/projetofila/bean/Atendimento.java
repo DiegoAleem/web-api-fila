@@ -17,8 +17,18 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name="ATENDIMENTO")
 public class Atendimento implements Serializable {
+	
+	public Atendimento() {
+		
+	}
        
-    @Id
+    public Atendimento(Date dataInicio, Token token, Funcionario funcionario) {
+		this.dataInicio = dataInicio;
+		this.token = token;
+		this.funcionario = funcionario;
+	}
+
+	@Id
     @Column(name="ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;

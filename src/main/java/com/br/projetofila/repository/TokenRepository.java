@@ -5,11 +5,27 @@ import com.br.projetofila.bean.Token;
 
 import java.util.ArrayList;
 import java.util.Date;
+
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public interface TokenRepository extends CrudRepository<Token, Integer>{
+	
+	@Modifying
+	@Transactional
+	@Query(value="UPDATE token "
+			+ "SET status_atendimento_id = ?1 "
+			+ "WHERE id = ?2", nativeQuery=true)
+	public void changeStatusAtendimentoById(String status, String id);
+	
+	@Query(value="SELECT *" + 
+			"FROM token " + 
+			"WHERE data_retirada = (SELECT MIN(data_retirada) FROM token WHERE (status_atendimento_id = 1 OR status_atendimento_id = 2) AND tipo_token_id = ?1)", nativeQuery=true)
+	public Token getProximoTokenByTipo(String tipoToken);
+
 	
 	@Query(value = "SELECT ROUND(AVG(MINUTE(TIMEDIFF(a.data_inicio, t.data_retirada)))) " + 
 			"FROM atendimento a " + 
@@ -38,11 +54,11 @@ public interface TokenRepository extends CrudRepository<Token, Integer>{
 			"AND t.tipo_token_id = ?1 AND t.STATUS_ATENDIMENTO_ID < 3", nativeQuery = true)
         public ArrayList<Token> getTokensAguardando(String tipoToken);    
 	
-        @Query(value = "SELECT MAX(senha) " + 
-			"FROM token " + 
-			"WHERE tipo_token_id = ?1 " + 
-			"AND DATE(data_retirada) = DATE(NOW())", nativeQuery = true)
-	public String getUltimaSenhaByTipo(String tipoToken);
+        
+//        SELECT MAX(a.senha) FROM (SELECT REPLACE(senha, 'P', ' ')*1 AS senha FROM token WHERE tipo_token_id = 2 AND DATE(data_retirada) = DATE(NOW())) a
+        @Query(value = "SELECT MAX(a.senha) " + 
+			"FROM (SELECT REPLACE(senha, 'P', ' ')*1 AS senha FROM token WHERE tipo_token_id = ?1 AND DATE(data_retirada) = DATE(NOW())) a ", nativeQuery = true)
+	public Integer getUltimaSenhaByTipo(String tipoToken);
     
     @Query("SELECT count(a)"
             + " FROM Atendimento a inner join a.token t WHERE t.tipoToken = 1 AND t.statusAtendimento < 3")
