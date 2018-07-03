@@ -25,7 +25,19 @@ public interface TokenRepository extends CrudRepository<Token, Integer>{
 			"FROM token " + 
 			"WHERE data_retirada = (SELECT MIN(data_retirada) FROM token WHERE (status_atendimento_id = 1 OR status_atendimento_id = 2) AND tipo_token_id = ?1)", nativeQuery=true)
 	public Token getProximoTokenByTipo(String tipoToken);
-
+	
+	@Modifying
+	@Transactional
+	@Query(value="UPDATE token "
+			+ "SET status_atendimento_id = 4 "
+			+ "WHERE senha = ?1", nativeQuery=true)
+	public void changeStatusAtendimentoConcluidoBySenha(String senha);
+	
+	@Modifying
+	@Transactional
+	@Query(value="UPDATE token "
+			+ "SET status_atendimento_id = 4 ", nativeQuery=true)
+	public void changeStatusAtendimentoAllConcluidoBySenha(String senha);
 	
 	@Query(value = "SELECT ROUND(AVG(MINUTE(TIMEDIFF(a.data_inicio, t.data_retirada)))) " + 
 			"FROM atendimento a " + 
@@ -33,7 +45,7 @@ public interface TokenRepository extends CrudRepository<Token, Integer>{
 			"ON a.token_id = t.id " + 
 			"WHERE MINUTE(TIMEDIFF(CURRENT_TIMESTAMP(),a.data_inicio)) < 60 " + 
 			"AND  DATE(a.data_inicio) = CURRENT_DATE() " + 
-			"AND t.tipo_token_id = ?1 AND t.STATUS_ATENDIMENTO_ID < 3 ", nativeQuery = true)
+			"AND t.tipo_token_id = ?1", nativeQuery = true)
 	public Integer getMediaTempoEsperaByTipo(String tipoToken);
 	
         @Query(value = "SELECT * " + 

@@ -39,6 +39,13 @@ public class TokenController {
     private StatusAtendimentoRepository satAtendimentoRepository;
     
     
+    @RequestMapping("/token")
+    public @ResponseBody
+    Iterable<Token> getAllTokens() {
+        return tokenRepository.findAll();
+    }
+    
+    
     @RequestMapping("/token/normal")
     public @ResponseBody
     LinkedHashMap<String, Token> getAllTokensNormal() {
@@ -55,6 +62,12 @@ public class TokenController {
     public @ResponseBody
     Optional<Token> getTokenById(@PathVariable("idToken") Integer idToken) {
         return tokenRepository.findById(idToken);
+    }
+    
+    @RequestMapping(method = RequestMethod.POST, value="/encerratoken/{senha}")
+    public String encerraToken(@PathVariable("senha") String senha){
+    	tokenRepository.changeStatusAtendimentoConcluidoBySenha(senha);
+    	return "";
     }
     
     @RequestMapping(method = RequestMethod.POST, value="/token")
@@ -126,8 +139,6 @@ public class TokenController {
         	status.setPosicaoFila(pos);
         }
  
-        
-        System.out.println(tempo);
         if(tempo.intValue() > 0)
             status.setTempoAtendimento(tempo * pos);
         else 
@@ -141,6 +152,7 @@ public class TokenController {
         }else {
             status.setStatus(tokenconfig.getStatusAtendimento().getDescricao());
         }
+        status.setStatus(tokenconfig.getStatusAtendimento().getDescricao());
         return new ResponseEntity<>(status, HttpStatus.OK);
     }
     
